@@ -1,7 +1,7 @@
 <?php
 
-
-define('APACHE_IP', '127.0.0.1');
+# Round-robin
+$www_servers = array('127.0.0.1', 'localhost');
 
 define('DB_NAME', 'wordpress');
 define('DB_USER', 'root');
@@ -22,7 +22,8 @@ $local_time = time();
 // check all blogs
 $rs = mysql_query("SELECT s.domain, b.path, b.blog_id FROM wp_site as s, wp_blogs as b where b.site_id = s.id;");
 
-$total = 0;
+$c = 0;
+
 while( ( $row = mysql_fetch_array($rs) ) != false ) {
   // print_r($row);
   if (DEBUG)
@@ -54,7 +55,8 @@ while( ( $row = mysql_fetch_array($rs) ) != false ) {
   echo "cron: {$row['domain']}{$row['path']}\n";
 
   # try connect to apache at IP.
-  $fp = fsockopen(APACHE_IP, 80);
+  $server = $www_servers[$c%count($www_servers)];
+  $fp = fsockopen($server, 80);
   if (!$fp) {
     echo "error connecting at {APACHE_IP}!";
     continue;
@@ -67,8 +69,8 @@ while( ( $row = mysql_fetch_array($rs) ) != false ) {
   }
   fclose($fp);
   
-  $total++;
-  if ( $total > 100 ) {
+  $c++;
+  if ( $c > 500 ) {
     # wait a while!.
     sleep(2);
     $total = 0;
