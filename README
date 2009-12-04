@@ -1,0 +1,10 @@
+
+Example: 
+# check every 5 minutes.
+*/5 * * * * php /full/path/wpmu_cron.php
+
+NOTE:
+Add 'define('DISABLE_WP_CRON', true); to wp-config.php to disable default Wordpress cron.
+
+
+
