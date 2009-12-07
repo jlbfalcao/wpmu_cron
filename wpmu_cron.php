@@ -55,10 +55,10 @@ while( ( $row = mysql_fetch_array($rs) ) != false ) {
   echo "cron: {$row['domain']}{$row['path']}\n";
 
   # try connect to apache at IP.
-  $server = $www_servers[$c%count($www_servers)];
+  $server = $www_servers[$c % count($www_servers)];
   $fp = fsockopen($server, 80);
   if (!$fp) {
-    echo "error connecting at {APACHE_IP}!";
+    echo "error connecting at {$server} at port 80!";
     continue;
   }
   $request = "GET {$row['path']}wp-cron.php HTTP/1.0\r\nHost: {$row['domain']}\r\n\r\n";
